@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clicko - Loading</title>
+    <link rel="stylesheet" href="../css/temp..css">
+</head>
+<body>
+    <div class="loading-container">
+        <div class="dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+        <p>Checking authentication...</p>
+    </div>
+
+    <script>
+        // Check authentication status
+        async function checkAuth() {
+            try {
+                const response = await fetch('/authservice/check', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+
+                if (response.ok) {
+                    // User is authenticated, redirect to main dashboard
+                    window.location.href = '/main';
+                } else {
+                    // User is not authenticated, redirect to sign in
+                    window.location.href = '/signin';
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                // On error, redirect to sign in
+                window.location.href = '/signin';
+            }
+        }
+
+        // Check authentication when page loads
+        document.addEventListener('DOMContentLoaded', checkAuth);
+    </script>
+</body>
+</html>

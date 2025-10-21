@@ -1,0 +1,20 @@
+body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f0f2f5; }
+.container, .auth-box { padding: 2rem; border-radius: 8px; background-color: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 300px; }
+form { display: flex; flex-direction: column; gap: 1rem; }
+input, button { padding: 0.75rem; border-radius: 4px; border: 1px solid #ccc; }
+button { background-color: #007bff; color: white; cursor: pointer; border: none; }
+.message { margin-top: 1rem; text-align: center; color: red; }
+a { display: block; margin-top: 10px; text-align: center; }
+.container p {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.container a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.container a:hover {
+  text-decoration: underline;
+}

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="../css/auth.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <div style="text-align: center; margin-bottom: 1rem;">
+      <a href="/" style="text-decoration: none; color: #667eea; font-size: 1.5rem; font-weight: bold;">
+        <i class="fas fa-link"></i> Clicko
+      </a>
+    </div>
+    <h2>Sign Up</h2>
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button id="signupBtn">Sign Up</button>
+
+    <p style="text-align:center; margin-top: 1rem;">
+      Already have an account? <a href="/signin">Sign in</a>
+    </p>
+  </div>
+
+  <script src="../js/auth.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const btn = document.getElementById('signupBtn');
+      if (!btn) return; // safety check
+
+      btn.addEventListener('click', async () => {
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        try {
+          await signUp(username, password);
+          alert("Signup successful! Please login.");
+          window.location.href = "/signin";
+        } catch (err) {
+          alert("Signup failed: " + err.message);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

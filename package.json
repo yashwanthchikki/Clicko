@@ -1,0 +1,39 @@
+{
+  "name": "clicko-url-shortener",
+  "version": "1.0.0",
+  "description": "A professional URL shortener with analytics and QR code generation",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "url-shortener",
+    "analytics",
+    "qr-code",
+    "mongodb",
+    "express"
+  ],
+  "author": "Clicko Team",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.5.0",
+    "cors": "^2.8.5",
+    "cookie-parser": "^1.4.6",
+    "bcrypt": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "shortid": "^2.2.16",
+    "qrcode": "^1.5.3",
+    "geoip-lite": "^1.4.7",
+    "sqlite3": "^5.1.6",
+    "sqlite": "^5.1.1",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
