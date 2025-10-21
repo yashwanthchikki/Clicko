@@ -377,33 +377,34 @@ async function createShortUrl(event) {
     }
 }
 
-// Delete short URL
 async function deleteShortUrl(shortUrlId) {
-    if (!confirm('Are you sure you want to delete this short URL?')) {
-        return;
-    }
-    
+    if (!confirm('Are you sure you want to delete this short URL?')) return;
+
+    console.log('Deleting short URL:', shortUrlId); // Debug
+
     try {
         const response = await fetch(`${DOMAIN}/api/shorturls/${shortUrlId}`, {
             method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
             credentials: 'include'
         });
-        
+
+        const data = await response.json();
+
         if (!response.ok) {
-            throw new Error('Failed to delete short URL');
+            throw new Error(data.error || 'Failed to delete short URL');
         }
-        
-        // Remove from current destination
+
+        // Remove from current destination in memory
         currentDestination.shortUrls = currentDestination.shortUrls.filter(su => su._id !== shortUrlId);
-        
-        // Refresh the modal
+
+        // Refresh modal
         showDestinationModal();
-        
         showSuccess('Short URL deleted successfully');
-        
+
     } catch (error) {
         console.error('Failed to delete short URL:', error);
-        showError('Failed to delete short URL');
+        showError('Failed to delete short URL: ' + error.message);
     }
 }
 
