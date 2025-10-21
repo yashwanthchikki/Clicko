@@ -292,34 +292,36 @@ async function updateDestination() {
     }
 }
 
-// Delete destination
 async function deleteDestination() {
-    if (!confirm('Are you sure you want to delete this destination and all its short URLs?')) {
-        return;
-    }
-    
+    if (!confirm('Are you sure you want to delete this destination and all its short URLs?')) return;
+
+    console.log('Deleting destination:', currentDestination._id); // debug
+
     try {
         const response = await fetch(`${DOMAIN}/api/urls/${currentDestination._id}`, {
             method: 'DELETE',
-            credentials: 'include'
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' }
         });
-        
+
+        const data = await response.json();
+
         if (!response.ok) {
-            throw new Error('Failed to delete destination');
+            throw new Error(data.error || 'Failed to delete destination');
         }
-        
-        // Remove from local data
+
+        // Update local state
         destinations = destinations.filter(d => d._id !== currentDestination._id);
-        
+
         // Close modal and refresh
         closeModal('destinationModal');
         renderDestinations();
-        
+
         showSuccess('Destination deleted successfully');
-        
+
     } catch (error) {
         console.error('Failed to delete destination:', error);
-        showError('Failed to delete destination');
+        showError('Failed to delete destination: ' + error.message);
     }
 }
 
