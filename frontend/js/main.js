@@ -413,39 +413,30 @@ async function deleteShortUrl(shortUrlId) {
 // Generate and download QR code
 async function downloadQR(shortUrlId) {
   try {
-    // Find the short URL data
-    const shortUrl = currentDestination.shortUrls.find(su => su._id === shortUrlId);
-    if (!shortUrl) {
-      throw new Error('Short URL not found');
+    // Construct API call to backend
+    const response = await fetch(`/api/shorturls/qr/${shortUrlId}`, {
+  method: 'GET',
+  credentials: 'include'
+});
+
+
+    if (!response.ok) {
+      throw new Error('Failed to generate QR code');
     }
-    
-    const fullUrl = `${window.location.origin}/${shortUrl.shortCode}`;
-    
-    // Generate QR code using client-side library
-    const canvas = document.createElement('canvas');
-    await QRCode.toCanvas(canvas, fullUrl, {
-      width: 256,
-      margin: 2,
-      color: {
-        dark: '#000000',
-        light: '#FFFFFF'
-      }
-    });
-    
-    // Convert canvas to blob and download
-    canvas.toBlob((blob) => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `qr-${shortUrl.alias || shortUrl.shortCode}.png`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    });
-    
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `qr-${shortUrlId}.png`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+
   } catch (error) {
-    console.error('Failed to generate QR code:', error);
+    console.error('Failed to download QR code:', error);
     showError('Failed to generate QR code');
   }
 }

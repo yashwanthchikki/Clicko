@@ -3,6 +3,10 @@ const router = express.Router();
 const { customAlphabet } = require('nanoid');
 const ShortUrl = require('../models/shorturl'); 
 const Destination = require('../models/destinantion');
+const generateQRCodeBuffer  = require('../commen/qrcode')
+
+
+
 
 // Nanoid generator for aliases
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 8);
@@ -25,29 +29,44 @@ router.get('/destination/:destinationId', async (req, res, next) => {
   }
 });
 
-// 2. Generate QR code for a short URL (must be before dynamic routes)
-router.get('/:id/qr', async (req, res, next) => {
+router.get('/qr/:id', async (req, res, next) => {
   try {
-    const userId = req.user.userId || req.user.id;
+    const userId = req.user.id;
     const shortUrl = await ShortUrl.findById(req.params.id).populate('destinationId');
-    
-    if (!shortUrl || shortUrl.destinationId.userId !== userId) {
-      return res.status(404).json({ error: 'Short URL not found' });
+
+    console.log("QR route hit", shortUrl.alias);
+
+    if (!shortUrl || String(shortUrl.destinationId.userId) !== String(userId)) {
+      return res.status(403).json({ error: 'Forbidden' });
     }
-    
-    const qrcode = require('../commen/qrcode');
-    const fullUrl = `http://localhost:3000/${shortUrl.alias}`;
-    const qrBuffer = await qrcode.generateQRCodeBuffer(fullUrl);
-    
+
+    // Use origin from request headers
+    const origin = req.headers.origin ;
+    const fullUrl = `${origin}/${shortUrl.alias}`;
+    console.log("Generating QR for URL:", fullUrl);
+
+    let qrBuffer;
+    try {
+      qrBuffer = await generateQRCodeBuffer(fullUrl);
+    } catch (err) {
+      console.error("QR generation failed:", err);
+      return res.status(500).json({ error: 'QR generation failed' });
+    }
+
     res.set({
       'Content-Type': 'image/png',
       'Content-Disposition': `attachment; filename="qr-${shortUrl.alias}.png"`
     });
     res.send(qrBuffer);
+
   } catch (error) {
+    console.error('QR route error:', error);
     next(error);
   }
 });
+
+
+
 
 // 3. Get a specific short URL by ID
 router.get('/:id', async (req, res, next) => {

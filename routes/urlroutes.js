@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Destination = require('../models/destinantion');
 
+const ShortUrl = require('../models/shorturl');
+
 // Get all destinations for a user
 router.get('/', async (req, res, next) => {
   try {
@@ -89,25 +91,22 @@ router.put('/:id', async (req, res, next) => {
   }
 });
 
-// DELETE /api/urls/:id
-router.delete('/:id', authMiddleware, async (req, res) => {
-  try {
-    const userId = req.user.userId || req.user.id;
 
-    // Delete the destination
-    const destination = await Destination.findOneAndDelete({ _id: req.params.id, userId });
-    if (!destination) {
-      return res.status(404).json({ error: 'Destination not found' });
+router.delete('/:id',  async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        // Delete the destination
+        const destination = await Destination.findOneAndDelete({ _id: req.params.id, userId });
+        if (!destination) return res.status(404).json({ error: 'Destination not found' });
+
+        // Delete all associated short URLs
+        await ShortUrl.deleteMany({ destinationId: req.params.id });
+
+        return res.status(200).json({ message: 'Destination deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting destination:', error);
+        return res.status(500).json({ error: 'Server error while deleting destination' });
     }
-
-    // Delete associated short URLs
-    await ShortUrl.deleteMany({ destinationId: req.params.id });
-
-    return res.status(200).json({ message: 'Destination deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting destination:', error);
-    return res.status(500).json({ error: 'Server error while deleting destination' });
-  }
 });
-
 module.exports = router;
