@@ -857,7 +857,22 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
+function formatDate(value) {
+    if (!value) return 'N/A';
+
+    let date;
+    if (typeof value === 'number') {
+        date = new Date(value);
+    } else if (typeof value === 'string') {
+        date = new Date(value);
+    } else if (value instanceof Date) {
+        date = value;
+    } else if (value.$date) {  // handle MongoDB extended JSON
+        date = new Date(value.$date);
+    } else {
+        return 'Invalid Date';
+    }
+
+    return date.toLocaleDateString();  // or toLocaleString() if you want time too
 }
+
